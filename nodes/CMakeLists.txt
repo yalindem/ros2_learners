@@ -10,13 +10,18 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(PCL 1.12 REQUIRED)  # Finds PCL
+find_package(pcl_conversions REQUIRED)
 
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-
+include_directories(
+  include
+  ${PCL_INCLUDE_DIRS}
+)
 
 add_executable(pub_node src/publisher.cpp)
 ament_target_dependencies(pub_node rclcpp std_msgs)
@@ -27,12 +32,17 @@ ament_target_dependencies(sub_node rclcpp std_msgs)
 add_executable(laser_pub src/laser_publisher.cpp)
 ament_target_dependencies(laser_pub rclcpp std_msgs sensor_msgs)
 
-
+add_executable(lidar_listener src/lidar_listener.cpp)
+ament_target_dependencies(lidar_listener rclcpp sensor_msgs)
+target_link_libraries(lidar_listener
+  ${PCL_LIBRARIES}
+)
 
 install(TARGETS
   pub_node
   sub_node
   laser_pub
+  lidar_listener
   DESTINATION lib/${PROJECT_NAME})
 
 
